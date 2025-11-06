@@ -1,198 +1,603 @@
 <!DOCTYPE html>
 <html lang="de">
   <head>
-    <meta charset="UTF-8" />
-    <title>HTML Input Test</title>
-    <link rel="stylesheet" href="https://parsleyjs.org/src/parsley.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Formular: alle Input-Typen + Validierung</title>
+
+    <!-- Parsley CSS (kleine Hilfestellung) -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/parsleyjs/src/parsley.css"
+    />
+
+    <style>
+      /* Moderner, klarer Stil - dark-ish card look */
+      :root {
+        --bg: #0f1724;
+        --card: #0b1220;
+        --accent: #f6c34a;
+        --muted: #94a3b8;
+        --white: #e6eef8;
+        --radius: 12px;
+      }
+      body {
+        background: linear-gradient(180deg, #071029 0%, #081226 100%);
+        color: var(--white);
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+      }
+      .container {
+        width: 980px;
+        max-width: 96%;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        border-radius: var(--radius);
+        padding: 28px;
+        box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+      }
+      h1 {
+        margin-top: 0;
+        color: var(--accent);
+        font-weight: 700;
+      }
+      form .row {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 10px 18px;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.03);
+      }
+      label {
+        font-size: 0.94rem;
+        color: var(--muted);
+      }
+      input,
+      select,
+      textarea {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        color: var(--white);
+        padding: 10px 12px;
+        border-radius: 8px;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.95rem;
+      }
+      input[type="range"] {
+        padding: 0;
+      }
+      .help {
+        font-size: 0.85rem;
+        color: #9fb0c8;
+        margin-top: 6px;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 18px;
+      }
+      button {
+        background: var(--accent);
+        color: #071026;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button.secondary {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      table.results {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+        color: var(--muted);
+      }
+      table.results th,
+      table.results td {
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        padding: 8px 10px;
+        text-align: left;
+      }
+      .note {
+        font-size: 0.9rem;
+        color: #bcd1e6;
+        margin-top: 14px;
+      }
+      .live-value {
+        font-weight: 700;
+        display: inline-block;
+        min-width: 48px;
+        text-align: center;
+      }
+    </style>
   </head>
-
-  <!-- Aufgabe A4 HTML - Eingabe Evaluation -->
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      padding: 20px;
-    }
-
-    form {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      margin: auto;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="url"],
-    input[type="tel"],
-    input[type="number"],
-    input[type="search"],
-    input[type="date"],
-    input[type="datetime-local"],
-    input[type="month"],
-    input[type="time"],
-    input[type="week"],
-    input[type="color"] {
-      width: 100%;
-      padding: 8px 10px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-      font-size: 14px;
-    }
-
-    input[type="checkbox"],
-    input[type="radio"] {
-      margin-right: 8px;
-    }
-
-    input[type="submit"],
-    input[type="reset"],
-    input[type="button"] {
-      background-color: #ffcc00;
-      border: none;
-      padding: 10px 20px;
-      margin-top: 20px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    input[type="submit"]:hover,
-    input[type="reset"]:hover,
-    input[type="button"]:hover {
-      background-color: #e6b800;
-    }
-
-    .parsley-errors-list {
-      color: red;
-      font-size: 13px;
-      margin: 5px 0 0 0;
-      list-style-type: none;
-      padding-left: 0;
-    }
-  </style>
-
   <body>
-    <form id="testForm" data-parsley-validate>
-      <label>Button:</label>
-      <input type="button" value="Klick mich" /><br /><br />
+    <div class="container">
+      <h1>HTML Fomrular - SSED 4cWI</h1>
+      <p class="muted">
+        Ich hab jedes Input-Type aus
+        <code>developer.mozilla.org</code> eingebaut. Formular validiert mit
+        HTML5 + Parsley.js Library
+      </p>
 
-      <label>Checkbox:</label>
-      <input type="checkbox" name="check1" value="1" /> Option 1<br />
-      <input type="checkbox" name="check2" value="2" /> Option 2<br /><br />
+      <form id="fullForm" data-parsley-validate>
+        <!-- button -->
+        <div class="row">
+          <label for="btn_demo">button (kein submit)</label>
+          <div>
+            <input type="button" id="btn_demo" value="Klick mich" />
+            <div class="help">
+              Beispiel: löst JS aus (alert) — nicht Teil des Submit.
+            </div>
+          </div>
+        </div>
 
-      <label>Color:</label>
-      <input type="color" name="favcolor" required /><br /><br />
+        <!-- checkbox -->
+        <div class="row">
+          <label>checkbox</label>
+          <div>
+            <label
+              ><input
+                type="checkbox"
+                name="agree"
+                value="yes"
+                required
+                data-parsley-required-message="Bitte zustimmen"
+              />
+              Ich stimme zu (required)</label
+            >
+          </div>
+        </div>
 
-      <label>Date:</label>
-      <input type="date" name="date" required /><br /><br />
+        <!-- color -->
+        <div class="row">
+          <label for="favcolor">color</label>
+          <div>
+            <input
+              type="color"
+              id="favcolor"
+              name="favcolor"
+              value="#00aaff"
+              required
+            />
+            <div class="help">Wähle eine Farbe (required).</div>
+          </div>
+        </div>
 
-      <label>Datetime-local:</label>
-      <input type="datetime-local" name="dtlocal" required /><br /><br />
+        <!-- date -->
+        <div class="row">
+          <label for="date">date</label>
+          <div>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              required
+              min="2020-01-01"
+              max="2030-12-31"
+              data-parsley-trigger="change"
+            />
+            <div class="help">Zwischen 2020 und 2030.</div>
+          </div>
+        </div>
 
-      <label>Email:</label>
-      <input type="email" name="email" required /><br /><br />
+        <!-- datetime-local -->
+        <div class="row">
+          <label for="dtlocal">datetime-local</label>
+          <div>
+            <input
+              type="datetime-local"
+              id="dtlocal"
+              name="dtlocal"
+              required
+              min="2025-01-01T08:00"
+              max="2030-12-31T23:59"
+              data-parsley-trigger="change"
+            />
+            <div class="help">
+              Datum + Uhrzeit (kein TZ). Min/Max sind gesetzt.
+            </div>
+          </div>
+        </div>
 
-      <label>File:</label>
-      <input type="file" name="file" required /><br /><br />
+        <!-- email -->
+        <div class="row">
+          <label for="email">email</label>
+          <div>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              data-parsley-type="email"
+              data-parsley-required-message="Email ist Pflicht"
+            />
+            <div class="help">HTML5 & Parsley validieren automatisch.</div>
+          </div>
+        </div>
 
-      <input type="hidden" name="hiddenField" value="hiddenValue" />
+        <!-- file -->
+        <div class="row">
+          <label for="file">file</label>
+          <div>
+            <input
+              type="file"
+              id="file"
+              name="file"
+              accept=".png,.jpg,.jpeg"
+              required
+            />
+            <div class="help">Nur PNG/JPG, max 2MB. JS prüft Typ & Größe.</div>
+          </div>
+        </div>
 
-      <label>Image:</label>
-      <input
-        type="image"
-        src="https://via.placeholder.com/50"
-        alt="Submit"
-      /><br /><br />
+        <!-- hidden -->
+        <div class="row" style="border-bottom: 0">
+          <label>hidden</label>
+          <div>
+            <input
+              type="hidden"
+              id="hiddenField"
+              name="hiddenField"
+              value="serverTokenPlaceholder"
+            />
+            <div class="help">
+              Hidden fields sind client-seitig manipulierbar — niemals
+              vertrauliche Daten!
+            </div>
+          </div>
+        </div>
 
-      <label>Month:</label>
-      <input type="month" name="month" required /><br /><br />
+        <!-- image -->
+        <div class="row">
+          <label for="imgbtn">image (submit button mit Bild)</label>
+          <div>
+            <!-- Dieses input liefert x/y Koordinaten bei Submit, JS liest Klick-Koordinaten -->
+            <input
+              type="image"
+              id="imgbtn"
+              name="imgbtn"
+              src="https://via.placeholder.com/120x40.png?text=Submit"
+              alt="Grafik-Submit"
+            />
+            <div class="help">
+              Click-Koordinaten werden geloggt (JS). Kein Ersatz für normalen
+              Submit hier.
+            </div>
+          </div>
+        </div>
 
-      <label>Number:</label>
-      <input
-        type="number"
-        name="number"
-        min="0"
-        max="100"
-        required
-      /><br /><br />
+        <!-- month -->
+        <div class="row">
+          <label for="month">month</label>
+          <div>
+            <input
+              type="month"
+              id="month"
+              name="month"
+              required
+              min="2022-01"
+              max="2030-12"
+            />
+            <div class="help">Monat + Jahr.</div>
+          </div>
+        </div>
 
-      <label>Password:</label>
-      <input
-        type="password"
-        name="password"
-        required
-        minlength="6"
-      /><br /><br />
+        <!-- number -->
+        <div class="row">
+          <label for="num">number</label>
+          <div>
+            <input
+              type="number"
+              id="num"
+              name="num"
+              required
+              min="1"
+              max="100"
+              step="1"
+              data-parsley-type="number"
+            />
+            <div class="help">1–100, ganzzahlig.</div>
+          </div>
+        </div>
 
-      <label>Radio:</label>
-      <input type="radio" name="gender" value="male" required /> Male
-      <input type="radio" name="gender" value="female" /> Female<br /><br />
+        <!-- password -->
+        <div class="row">
+          <label for="pw">password</label>
+          <div>
+            <input
+              type="password"
+              id="pw"
+              name="pw"
+              required
+              minlength="8"
+              maxlength="64"
+              data-parsley-minlength="8"
+              data-parsley-required-message="Passwort benötigt"
+            />
+            <div class="help">Mind. 8 Zeichen.</div>
+          </div>
+        </div>
 
-      <label>Range:</label>
-      <input type="range" name="range" min="0" max="10" value="5" /><br /><br />
+        <!-- radio -->
+        <div class="row">
+          <label>radio</label>
+          <div>
+            <label
+              ><input type="radio" name="opt" value="a" required /> Option
+              A</label
+            >
+            <label style="margin-left: 12px"
+              ><input type="radio" name="opt" value="b" /> Option B</label
+            >
+          </div>
+        </div>
 
-      <input type="reset" value="Reset Form" /><br /><br />
+        <!-- range -->
+        <div class="row">
+          <label for="r">range</label>
+          <div>
+            <input type="range" id="r" name="r" min="0" max="100" value="50" />
+            <div class="help">
+              Wert: <span id="rVal" class="live-value">50</span>
+            </div>
+          </div>
+        </div>
 
-      <label>Search:</label>
-      <input type="search" name="search" required /><br /><br />
+        <!-- reset -->
+        <div class="row">
+          <label>reset</label>
+          <div>
+            <input type="reset" value="Form zurücksetzen" />
+            <div class="help">
+              Reset setzt die Werte zurück. Du kannst JS anhängen, wenn nötig.
+            </div>
+          </div>
+        </div>
 
-      <input type="submit" value="Submit Form" /><br /><br />
+        <!-- search -->
+        <div class="row">
+          <label for="search">search</label>
+          <div>
+            <input type="search" id="search" name="search" maxlength="80" />
+            <div class="help">Suchfeld (Zeilenumbrüche entfernt).</div>
+          </div>
+        </div>
 
-      <label>Tel:</label>
-      <input
-        type="tel"
-        name="tel"
-        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-        placeholder="123-456-7890"
-        required
-      /><br /><br />
+        <!-- submit placeholder: real submit at the bottom as requested -->
+        <div style="height: 12px"></div>
 
-      <label>Text:</label>
-      <input type="text" name="text" required minlength="3" /><br /><br />
+        <!-- tel -->
+        <div class="row">
+          <label for="tel">tel</label>
+          <div>
+            <input
+              type="tel"
+              id="tel"
+              name="tel"
+              required
+              pattern="^\+?[0-9\-\s]{7,20}$"
+              data-parsley-pattern="^\+?[0-9\-\s]{7,20}$"
+              data-parsley-required-message="Telefonnummer fehlt"
+            />
+            <div class="help">
+              Z. B. +43 664 1234567. Pattern prüft Zahlen, +, Bindestriche,
+              Spaces.
+            </div>
+          </div>
+        </div>
 
-      <label>Time:</label>
-      <input type="time" name="time" required /><br /><br />
+        <!-- text -->
+        <div class="row">
+          <label for="text">text</label>
+          <div>
+            <input
+              type="text"
+              id="text"
+              name="text"
+              required
+              minlength="2"
+              maxlength="120"
+            />
+            <div class="help">Single-line Text.</div>
+          </div>
+        </div>
 
-      <label>URL:</label>
-      <input
-        type="url"
-        name="url"
-        placeholder="https://example.com"
-        required
-      /><br /><br />
+        <!-- time -->
+        <div class="row">
+          <label for="time">time</label>
+          <div>
+            <input
+              type="time"
+              id="time"
+              name="time"
+              required
+              min="08:00"
+              max="18:00"
+            />
+            <div class="help">
+              Nur zwischen 08:00 und 18:00 erlaubt (Beispiel).
+            </div>
+          </div>
+        </div>
 
-      <label>Week:</label>
-      <input type="week" name="week" required /><br /><br />
-    </form>
+        <!-- url -->
+        <div class="row">
+          <label for="url">url</label>
+          <div>
+            <input
+              type="url"
+              id="url"
+              name="url"
+              required
+              placeholder="https://example.com"
+            />
+            <div class="help">HTML5 validiert URL-Format.</div>
+          </div>
+        </div>
 
-    <script src="https://parsleyjs.org/dist/parsley.min.js"></script>
+        <!-- week -->
+        <div class="row">
+          <label for="week">week</label>
+          <div>
+            <input
+              type="week"
+              id="week"
+              name="week"
+              required
+              min="2025-W01"
+              max="2030-W52"
+            />
+            <div class="help">Woche des Jahres (YYYY-Www).</div>
+          </div>
+        </div>
+
+        <!-- textarea sample for completeness -->
+        <div class="row">
+          <label for="msg">textarea</label>
+          <div>
+            <textarea
+              id="msg"
+              name="msg"
+              rows="4"
+              maxlength="600"
+              placeholder="Nachricht..."
+              required
+            ></textarea>
+            <div class="help">Max 600 Zeichen.</div>
+          </div>
+        </div>
+
+        <!-- submit area (ganz am Ende) -->
+        <div class="actions">
+          <button type="button" class="secondary" id="previewBtn">
+            Preview (JS)
+          </button>
+          <button type="submit" id="finalSubmit">Formular abschicken</button>
+        </div>
+      </form>
+
+
+    <!-- Parsley -->
+    <script src="https://cdn.jsdelivr.net/npm/parsleyjs/dist/parsley.min.js"></script>
+
     <script>
-      // Parsley initialisieren
-      window.Parsley.addValidator("customNumber", {
-        requirementType: "number",
-        validateNumber: function (value) {
-          return value % 2 === 0; // Beispiel: nur gerade Zahlen erlaubt
-        },
-        messages: {
-          en: "Nur gerade Zahlen erlaubt.",
-        },
-      });
+      // --- Init Parsley für das Formular ---
+      document.addEventListener("DOMContentLoaded", function () {
+        var form = document.getElementById("fullForm");
+        // Parsley init
+        $(form).parsley && $(form).parsley();
 
-      document.querySelector("#testForm").parsley();
+        // Button Demo (nur UX)
+        document
+          .getElementById("btn_demo")
+          .addEventListener("click", function () {
+            alert(
+              "Nice! Du hast den Demo-Button geklickt. (keine Form-Submit-Action)"
+            );
+          });
+
+        // Range live value
+        var r = document.getElementById("r");
+        var rVal = document.getElementById("rVal");
+        r.addEventListener("input", function () {
+          rVal.textContent = r.value;
+        });
+
+
+// File validation (Typ & Größe)
+const fileInput = document.getElementById("file");
+
+fileInput.addEventListener("change", function (e) {
+  const f = e.target.files[0];
+  if (!f) return;
+
+  const maxBytes = 2 * 1024 * 1024; // 2MB
+  const allowed = ["image/png", "image/jpeg"];
+
+  if (!allowed.includes(f.type)) {
+    alert("Nur PNG und JPG erlaubt!");
+    e.target.value = "";
+    return;
+  }
+
+  if (f.size > maxBytes) {
+    alert("Datei zu groß. Max 2MB!");
+    e.target.value = "";
+    return;
+  }
+
+  alert("Datei akzeptiert ✅");
+});
+
+
+
+        // image input: Klick-Koordinaten lesen
+        document
+          .getElementById("imgbtn")
+          .addEventListener("click", function (ev) {
+            // Bei input[type="image"] liefert der Browser x/y in submit params, aber wir lesen hier:
+            var rect = ev.target.getBoundingClientRect();
+            var x = Math.round(ev.clientX - rect.left);
+            var y = Math.round(ev.clientY - rect.top);
+            console.log("Image-Submit Klickkoordinaten:", x, y);
+            // Bei Bedarf: in hidden Field schreiben
+            document.getElementById("hiddenField").value =
+              "imgClick:" + x + "," + y;
+            // NOTE: Dies allein sichert nichts. Serverseitig prüfen.
+          });
+
+        // Preview Button: kurz alle Werte loggen
+        document
+          .getElementById("previewBtn")
+          .addEventListener("click", function () {
+            var fd = new FormData(form);
+            var out = [];
+            for (var pair of fd.entries()) {
+              out.push(pair[0] + ": " + pair[1]);
+            }
+            alert("Form Preview\\n\\n" + out.join("\\n"));
+          });
+
+        // Submit handler: Parsley validiert automatisch; zusätzlich ein console.log
+        form.addEventListener("submit", function (ev) {
+          ev.preventDefault();
+          // Parsley check (if available)
+          var parsleyOk = true;
+          if ($(form).parsley) {
+            parsleyOk = $(form).parsley().validate();
+          }
+          if (!parsleyOk) {
+            alert("Bitte prüfe die markierten Felder.");
+            return;
+          }
+          // Simulierter Submit: hier solltest du fetch()/XHR zum Server machen
+          var fdata = new FormData(form);
+          console.log("Form ready to send (simulate):");
+          for (var pair of fdata.entries()) {
+            console.log(pair[0], pair[1]);
+          }
+          alert("Formular ist validiert. Simulierter Versand (siehe Console).");
+        });
+      });
     </script>
   </body>
 </html>
